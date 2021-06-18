@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "cafe-api-auth": {
+      "commandName": "Project"
+    }
+  }
+}
