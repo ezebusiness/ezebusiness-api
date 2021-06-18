@@ -30,10 +30,11 @@ namespace cafe_api_auth.Services
 
         public AuthResponse<Customer> LoginUser(AuthRequest loginRequest, HttpRequest req)
         {
-            var customer = Find(q => q.Email.Equals(loginRequest.Username)).FirstOrDefault();
+            var customers = Find(q => q.Email == loginRequest.Username);
 
-            if (customer != null)
+            if (customers.Any())
             {
+                var customer = customers.FirstOrDefault();
                 string hashedPassword = _encryptionHelper.CreatePasswordHash(loginRequest.Password, customer.PasswordSalt);
                 bool isValid = hashedPassword.Equals(customer.Password);
 
@@ -56,7 +57,7 @@ namespace cafe_api_auth.Services
             if (string.IsNullOrEmpty(username))
                 return null;
 
-            var customer = Find(q => q.Email.Equals(username)).FirstOrDefault();
+            var customer = Find(q => q.Email == username).FirstOrDefault();
 
             if (customer != null)
                 return customer.Adapt<CustomerDto>();

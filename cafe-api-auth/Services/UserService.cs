@@ -40,7 +40,7 @@ namespace cafe_api_auth.Services
                                               .Set(q => q.UpdatedAtUtc, DateTime.UtcNow)
                                               .Set(q => q.CreatedAtUtc, DateTime.UtcNow);
 
-            await UpdateField(q => q.Username.Equals(userModel.Username), update, isUpsert: true);
+            await UpdateField(q => q.Username == userModel.Username, update, isUpsert: true);
         }
 
         public async Task<string> RenewAccessToken(HttpRequest req)
