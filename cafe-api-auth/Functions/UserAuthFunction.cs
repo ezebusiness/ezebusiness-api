@@ -62,7 +62,7 @@ namespace cafe_api_auth
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Internal Server Error. Exception: {ex.Message}");
+                _logger.LogError($"Internal Server Error. Exception: {ex.StackTrace}");
 
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
