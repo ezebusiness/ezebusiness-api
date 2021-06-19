@@ -1,6 +1,7 @@
 ﻿using dbsql_setup.Interfaces;
 using dbsql_setup.Models;
 using dbsql_setup.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,16 @@ namespace dbsql_setup.Services
         public SqlBaseService(ISqlGenericRepository<TModel> genericRepository)
         {
             _genericRepository = genericRepository;
+        }
+
+        public SqlBaseDbContext<TModel> DbContext()
+        {
+            return _genericRepository.DbContext();
+        }
+
+        public DbSet<TModel> DbSet()
+        {
+            return _genericRepository.DbSet();
         }
 
         public async Task AddAsync(TModel modelToAdd)
@@ -44,8 +55,18 @@ namespace dbsql_setup.Services
             return _genericRepository.Exist(predicate);
         }
 
+        public IList<TModel> Find(string sqlStatement, params object[] parameters)
+        {
+            return _genericRepository.Find(sqlStatement, parameters);
+        }
+
         public IList<TModel> Find(Func<TModel, bool> predicate) {
             return _genericRepository.Find(predicate);
+        }
+
+        public IList<TModel> Find<TChild>(Func<TModel, bool> predicate, Expression<Func<TModel, TChild>> includeObject)
+        {
+            return _genericRepository.Find(predicate, includeObject);
         }
 
         public async Task<IList<TModel>> GetAllAsync()

@@ -1,4 +1,6 @@
 ﻿using dbsql_setup.Models;
+using dbsql_setup.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -21,5 +23,9 @@ namespace dbsql_setup.Interfaces
         Task<int> SaveChangesAsync();
         void Update(TModel modelToUpdate);
         void UpdateRange(IList<TModel> modelsToUpdate);
+        IList<TModel> Find<TChild>(Func<TModel, bool> predicate, Expression<Func<TModel, TChild>> includeObject);
+        IList<TModel> Find(string sqlStatement, params object[] parameters);
+        SqlBaseDbContext<TModel> DbContext();
+        DbSet<TModel> DbSet();
     }
 }

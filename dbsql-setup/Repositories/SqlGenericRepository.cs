@@ -21,14 +21,34 @@ namespace dbsql_setup.Repositories
             _dbSet = _dbContext.GenericEntity;
         }
 
+        public SqlBaseDbContext<TModel> DbContext()
+        {
+            return _dbContext;
+        }
+
+        public DbSet<TModel> DbSet()
+        {
+            return _dbSet;
+        }
+
         public async Task<IList<TModel>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
+        public IList<TModel> Find(string sqlStatement, params object[] parameters)
+        {
+            return _dbSet.FromSqlRaw(sqlStatement, parameters).ToList();
+        }
+
         public IList<TModel> Find(Func<TModel, bool> predicate)
         {
             return _dbSet.Where(predicate).ToList();
+        }
+
+        public IList<TModel> Find<TChild>(Func<TModel, bool> predicate, Expression<Func<TModel, TChild>> includeObject)
+        {
+            return _dbSet.Include(includeObject).Where(predicate).ToList();
         }
 
         public TModel GetById(int id)

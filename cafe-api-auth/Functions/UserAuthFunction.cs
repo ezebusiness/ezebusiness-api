@@ -15,6 +15,7 @@ using cafe_api_auth.Dtos;
 using System.Net.Http;
 using System.Net;
 using System.Text;
+using System.Linq;
 
 namespace cafe_api_auth
 {
@@ -51,9 +52,12 @@ namespace cafe_api_auth
 
                 var res = new HttpResponseMessage(HttpStatusCode.OK);
 
+                var roles = loginResponse.User.CustomerRoleMappings.Select(q => new { q.CustomerRole.Id, q.CustomerRole.Name });
+
                 res.Content = new StringContent(JsonConvert.SerializeObject(new
                 {
                     user = loginResponse.User.Adapt<CustomerDto>(),
+                    roles = roles,
                     access_token = loginResponse.Token,
                     refresh_token = loginResponse.RefreshToken
                 }), Encoding.UTF8, "application/json");

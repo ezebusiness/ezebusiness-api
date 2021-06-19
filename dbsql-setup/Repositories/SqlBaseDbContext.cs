@@ -1,6 +1,11 @@
-﻿using dbsql_setup.Models;
+﻿using dbsql_setup.Interfaces;
+using dbsql_setup.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace dbsql_setup.Repositories
 {
@@ -24,10 +29,31 @@ namespace dbsql_setup.Repositories
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<TModel>(entity =>
+            //modelBuilder.Entity<TModel>(entity =>
+            //{
+            //    entity.ToTable(typeof(TModel).Name);
+            //});
+
+            foreach (var mb in LoadModelBuilders())
             {
-                entity.ToTable(typeof(TModel).Name);
-            });
+                mb.OnModelCreating(modelBuilder);
+            }
+        }
+
+        private static IList<IModelBuilder> LoadModelBuilders()
+        {
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes());
+
+            var mapsFrom = (
+                    from type in types
+                    from instance in type.GetInterfaces()
+                    where
+                        typeof(IModelBuilder).IsAssignableFrom(type) &&
+                        !type.IsAbstract &&
+                        !type.IsInterface
+                    select (IModelBuilder)Activator.CreateInstance(type)).ToList();
+
+            return mapsFrom;
         }
     }
 }

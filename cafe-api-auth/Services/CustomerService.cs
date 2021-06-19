@@ -8,6 +8,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using cafe_api_auth.Dtos;
 using Mapster;
+using dbsql_setup.Models;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace cafe_api_auth.Services
 {
@@ -30,7 +33,9 @@ namespace cafe_api_auth.Services
 
         public AuthResponse<Customer> LoginUser(AuthRequest loginRequest, HttpRequest req)
         {
-            var customers = Find(q => q.Email == loginRequest.Username);
+            //var customers = Find(q => q.Email == loginRequest.Username);
+
+            var customers = DbSet().Include(q => q.CustomerRoleMappings).ThenInclude(q => q.CustomerRole).Where(q => q.Email == loginRequest.Username);
 
             if (customers.Any())
             {
