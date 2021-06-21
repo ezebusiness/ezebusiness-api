@@ -135,5 +135,21 @@ namespace cafe_api_auth
                 return new StatusCodeResult(StatusCodes.Status400BadRequest);
             }
         }
+
+        [FunctionName("CafeAuthTest")]
+        public IActionResult Test(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "auth/test")] HttpRequest req)
+        {
+            try
+            {
+                return new OkObjectResult("dev is working");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Internal Server Error. Exception: {ex.Message}");
+
+                return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            }
+        }
     }
 }
